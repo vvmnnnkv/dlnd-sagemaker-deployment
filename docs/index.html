@@ -13,8 +13,11 @@
 
         function submitForm(oFormElement) {
             var xhr = new XMLHttpRequest();
+            var status = false,
+                message = '',
+                resultElement = document.getElementById('result'),
+                review = document.getElementById('review');
             xhr.onload = function () {
-                var status = false, message = '', resultElement = document.getElementById('result');
                 switch (xhr.status) {
                     case 200:
                         var result = parseInt(xhr.responseText);
@@ -41,9 +44,13 @@
                 resultElement.className = status ? 'bg-success' : 'bg-danger';
                 resultElement.innerHTML = message;
             };
-            xhr.open(oFormElement.method, oFormElement.action, true);
-            var review = document.getElementById('review');
-            xhr.send(review.value);
+            try {
+                xhr.open(oFormElement.method, oFormElement.action, true);
+                xhr.send(review.value);
+            } catch (e) {
+                resultElement.className = 'bg-danger';
+                resultElement.innerHTML = 'Failed to send request: ' + e.message;
+            }
             return false;
         }
     </script>
